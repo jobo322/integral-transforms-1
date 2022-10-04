@@ -1,17 +1,16 @@
 import { BorderType, fftConvolution } from 'ml-convolution';
-import { getShape1D } from 'ml-peak-shape-generator';
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 
 import { yNorm } from './utilities/yNorm';
 
 export function getbroadenedSpectrum(array: number[], options: Options = {}) {
   const {
-    kind = 'gaussian',
+    shape = { kind: 'gaussian', sd: 1.2 },
     kernelWidth = 7,
     normalized = false,
-    sd = 1.2,
     height = 1,
   } = options;
-  const kernelBasis = getShape1D({ kind, sd, fwhm: kernelWidth });
+  const kernelBasis = getShape1D({ ...shape, fwhm: kernelWidth });
   const kernel = kernelBasis.getData({
     length: kernelWidth,
     height,
@@ -21,9 +20,8 @@ export function getbroadenedSpectrum(array: number[], options: Options = {}) {
 }
 
 interface Options {
-  kind?: 'pseudoVoigt' | 'gaussian' | 'lorentzian';
+  shape?: Shape1D;
   kernelWidth?: number;
   normalized?: boolean;
-  sd?: number;
   height?: number;
 }
